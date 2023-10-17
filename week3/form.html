@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+  <body>
+    <div id="form">
+      <h1>User Registration</h1>
+      <form id="registration-form" action="#" method="post">
+        <div class="input-control">
+          <label for="username">Username:</label>
+          <input type="text" id="username" name="username" />
+          <div class="error" id="username-error"></div>
+        </div>
+        <div class="input-control">
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" />
+          <div class="error" id="email-error"></div>
+        </div>
+        <div class="input-control">
+          <label for="password">Password:</label>
+          <input type="password" id="password" name="password" />
+          <div class="error" id="password-error"></div>
+        </div>
+        <div class="input-control">
+          <label for="confirm-password">Confirm Password:</label>
+          <input
+            type="password"
+            id="confirm-password"
+            name="confirm-password"
+          />
+          <div class="error" id="confirm-password-error"></div>
+        </div>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("registration-form");
+
+        // Function to check if an input is empty
+        function isEmpty(inputValue) {
+          return inputValue.trim() === "";
+        }
+
+        // Function to validate the username
+        function validateUsername() {
+          const username = document.getElementById("username");
+          const usernameError = document.getElementById("username-error");
+
+          if (isEmpty(username.value)) {
+            usernameError.textContent = "Username cannot be empty";
+            username.classList.add("error");
+          } else {
+            usernameError.textContent = "";
+            username.classList.remove("error");
+            username.classList.add("success");
+          }
+        }
+
+        // Function to validate the email
+        function validateEmail() {
+          const email = document.getElementById("email");
+          const emailError = document.getElementById("email-error");
+          const emailPattern =
+            /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+
+          if (isEmpty(email.value)) {
+            emailError.textContent = "Email cannot be empty";
+            email.classList.add("error");
+          } else if (!emailPattern.test(email.value)) {
+            emailError.textContent = "Invalid email format";
+            email.classList.add("error");
+          } else {
+            emailError.textContent = "";
+            email.classList.remove("error");
+            email.classList.add("success");
+          }
+        }
+
+        // Function to validate the password
+        function validatePassword() {
+          const password = document.getElementById("password");
+          const passwordError = document.getElementById("password-error");
+
+          if (isEmpty(password.value) || password.value.length < 8) {
+            passwordError.textContent =
+              "Password must be at least 8 characters";
+            password.classList.add("error");
+          } else {
+            passwordError.textContent = "";
+            password.classList.remove("error");
+            password.classList.add("success");
+          }
+        }
+
+        // Function to validate the confirm password
+        function validateConfirmPassword() {
+          const confirmPassword = document.getElementById("confirm-password");
+          const confirmPasswordError = document.getElementById(
+            "confirm-password-error"
+          );
+          const password = document.getElementById("password");
+
+          if (
+            isEmpty(confirmPassword.value) ||
+            confirmPassword.value !== password.value
+          ) {
+            confirmPasswordError.textContent = "Passwords do not match";
+            confirmPassword.classList.add("error");
+          } else {
+            confirmPasswordError.textContent = "";
+            confirmPassword.classList.remove("error");
+            confirmPassword.classList.add("success");
+          }
+        }
+
+        // Event listeners for input fields
+        document
+          .getElementById("username")
+          .addEventListener("blur", validateUsername);
+        document
+          .getElementById("email")
+          .addEventListener("blur", validateEmail);
+        document
+          .getElementById("password")
+          .addEventListener("blur", validatePassword);
+        document
+          .getElementById("confirm-password")
+          .addEventListener("blur", validateConfirmPassword);
+
+        // Event listener for form submission
+        form.addEventListener("submit", function (event) {
+          event.preventDefault(); // Prevent the form from submitting
+
+          // Run all validation functions before allowing submission
+          validateUsername();
+          validateEmail();
+          validatePassword();
+          validateConfirmPassword();
+
+          // Check if there are any errors
+          if (
+            document.querySelectorAll(".input-control.error").length === 0 &&
+            document.querySelectorAll(".input-control.success").length === 4
+          ) {
+            alert("Registration successful!"); // You can replace this with actual form submission code
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
