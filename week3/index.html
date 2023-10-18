@@ -27,12 +27,13 @@
         </ul>
       </nav>
 
-      <!-- Banner Section -->
+      <!--Replace the Banner Section with the slider -->
       <section class="banner-container">
         <img
-          src="images/travel banner.svg"
-          alt="Illustrative banner of travel destinations"
-          class="centered-banner"
+          name="slide"
+          alt="Scenic view of various tourism locations"
+          title="Scenic view of various tourism locations"
+          width="70%"
         />
       </section>
 
@@ -131,5 +132,39 @@
         </p>
       </footer>
     </div>
+    <script>
+      // Declare a variable and set it to 0 to be the starting point.
+      let currentImageIndex = 0;
+
+      // Declared images variable which will be an array of image paths.
+      const images = [
+        /*"images/1.jpeg", Did not use this image due to it's poor resolution and visual appearance on the website*/
+        "images/2.jpeg",
+        "images/3.jpeg",
+        "images/4.jpeg",
+        "images/5.jpeg",
+        "images/6.jpeg",
+        "images/7.jpeg",
+        "images/8.jpeg",
+      ];
+
+      // Declared a variable to set the time interval between each image slide.
+      const slideInterval = 2000;
+
+      // Created a function to change the source of the image element with the name 'slide' to display different images from the array.
+      function changeImage() {
+        const slideImage = document.getElementsByName("slide")[0];
+        slideImage.src = images[currentImageIndex];
+
+        // Increment's the index for the next image and loops back to the first image at the end.
+        currentImageIndex = (currentImageIndex + 1) % images.length;
+      }
+
+      // Run the changeImage function every 2 seconds.
+      setInterval(changeImage, slideInterval);
+
+      // Run the changeImage function when the page loads.
+      window.addEventListener("load", changeImage);
+    </script>
   </body>
 </html>
