@@ -1,48 +1,8 @@
-var myCity = [
-
-    {
-        "name": "Dubai",
-        "country": "UAE",
-        "place": "Dubai Mall"
-    },
-
-    {
-        "name": "Milan",
-        "country": "Italy",
-        "place": "Duomo Di Milano"
-    },
-
-    {
-        "name": "Moscow",
-        "country": "Russia",
-        "place": "Bolshoi Theatre"
-    }
-
-]
-
-function displayCities(city) {
-    var cityInfo = '';
-    city.forEach(function (item) {
-      cityInfo += `
-        <div class="city-card">
-          <h2>${item.name}, ${item.country}</h2>
-          <p>${item.place}</p>
-        </div>
-      `;
-    });
-    $('#city-info').html(cityInfo);
-}
-
-$('#btn').click(function() {
-    displayCities(myCity);
-    $('#btn').addClass("hide-me");
-});
-
 var cityContainer = document.getElementById("city-info");
 var btn = document.getElementById("btn");
 btn.addEventListener("click", function(){
 var ourRequest = new XMLHttpRequest();
-ourRequest.open('GET', 'https://kevinwilson16.github.io/F28WP-Lab1/cities1.json');
+ourRequest.open('GET', 'https://kevinwilson16.github.io/F28WP-Lab1/week4/Practice2/cities1.json');
 ourRequest.onload = function() {
 var ourData = JSON.parse(ourRequest.responseText);
 renderHTML(ourData);
