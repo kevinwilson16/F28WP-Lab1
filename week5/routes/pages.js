@@ -7,6 +7,7 @@ router.get('/', (req, res) => {
         user: req.user
     });
     });
+    
 router.get('/register', (req, res) => {
     res.render('register');
 });
