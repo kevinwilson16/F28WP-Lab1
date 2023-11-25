@@ -1,3 +1,6 @@
+.table tr {
+    height: 60px; 
+}
 nav {
     background-color: #563d7c;
     color: #fff;

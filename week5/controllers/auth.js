@@ -1,7 +1,6 @@
-
+const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-
 const mysql = require('mysql');
 const db = mysql.createConnection({
     host: process.env.DATABASE_HOST,
@@ -10,8 +9,7 @@ const db = mysql.createConnection({
     database: process.env.DATABASE
 });
 
-
-exports.register = (req, res) => {
+exports.register = async (req, res) => {
     console.log(req.body);
 
     const { name, email, password, passwordConfirm } = req.body;
@@ -32,7 +30,6 @@ exports.register = (req, res) => {
         }
 
         let hashedPassword = await bcrypt.hash(password, 8);
-        console.log
 
         db.query('INSERT INTO users SET ?', {name: name, email: email, password: hashedPassword}, (error, results) => {
             if (error) {
@@ -44,9 +41,83 @@ exports.register = (req, res) => {
                 });
             }
         });
-
-        // Continue with the registration logic here
-
-       // res.send('Form submitted');
     });
+};
+
+exports.login = async (req, res) => {
+        try {
+            const { email, password } = req.body;
+            if(!email || !password) {
+                return res.status(400).render('login', {
+                    message: 'Please provide your email and password'
+                });
+            }
+    
+            db.query('SELECT * FROM users WHERE email = ?', [email], async (error, results) => {
+                console.log(results);
+                if(!results || !(await bcrypt.compare(password, results[0].password))) {
+                    res.status(401).render('login', {
+                        message: 'Your email or password is incorrect'
+                    });
+                } else {
+                    const id = results[0].id;
+                    const token = jwt.sign({ id }, process.env.JWT_SECRET, {
+                        expiresIn: process.env.JWT_EXPIRES_IN
+                    });
+                    console.log('The token is: ' + token);
+    
+                    const cookieOptions = {
+                        expires: new Date(
+                            Date.now() + parseInt(process.env.JWT_COOKIE_EXPIRES) * 24 * 60 * 60 * 1000
+                        ),
+                        httpOnly: true
+                    };
+                    res.cookie('jwt', token, cookieOptions);
+                    res.status(200).redirect("/profile");
+                }
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+
+exports.logout = async (req, res) => {
+    res.cookie('jwt', 'logout', {
+        expires: new Date(Date.now() + 2*1000),
+        httpOnly: true
+    });
+    res.status(200).redirect('/');
+};
+
+exports.isLoggedIn = async (req, res, next) => {
+    console.log(req.cookies);
+            if(req.cookies.jwt) {
+              try {
+                const decoded = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRET);
+                console.log(decoded);
+          
+                db.query('SELECT * FROM users WHERE id = ?', [decoded.id], (error, result) => {
+                  try {
+                    console.log(result);
+          
+                    if(!result) {
+                      return next();
+                    }
+                    req.user = result[0];
+                    console.log("The user is: ");   
+                    console.log(req.user);
+                    return next();
+                  } catch (error) {
+                    console.log(error);
+                    return next();
+                  }
+                });
+              } catch (error) {
+                console.log(error);
+                return next();
+              }
+            } else {
+              return next();
+            }
 };
