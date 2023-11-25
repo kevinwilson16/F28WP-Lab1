@@ -3,6 +3,7 @@ const mysql   = require('mysql');
 const dotenv  = require('dotenv');
 dotenv.config({path: './.env'});
 const path    = require('path');
+const cookieParser = require('cookie-parser');
 const app   = express();
 const port  = 5000;
 
@@ -24,16 +25,13 @@ db.connect((error) =>{
 const publicDirectory = path.join(__dirname, './public');
 app.use(express.static(publicDirectory));
 app.set('view engine', 'hbs');
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 
 
-
-app.get('/', (req, res) => {
-    res.render('index');
-});
-
-app.get('/register', (req, res) => {
-    res.render('register');
-});
+// Define Routes
+app.use('/', require('./routes/pages'));
+app.use('/auth', require('./routes/auth.js'));
 
 app.listen(5000, () => {
     console.log(`Server is running on port ${port}`);
